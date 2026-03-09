@@ -1,6 +1,4 @@
 let userModel = require('../schemas/users')
-let bcrypt = require('bcrypt')
-let jwt = require('jsonwebtoken');
 module.exports = {
     CreateAnUser: async function (username, password, email, role,
         avatarUrl, fullName, status, loginCount
@@ -22,15 +20,13 @@ module.exports = {
         let getUser = await userModel.findOne({ username: username });
         if (!getUser) {
             return false;
-        } else {
-            let result = bcrypt.compareSync(password, getUser.password);
-            if (result) {
-                return jwt.sign(
-                    { id: result._id }, "a-string-secret-at-least-256-bits-long"
-                )
-            } else {
-                return false
-            }
         }
+        return getUser;
+    },
+    FindUserById: async function (id) {
+        return await userModel.findOne({
+            _id: id,
+            isDeleted:false
+        })
     }
 }

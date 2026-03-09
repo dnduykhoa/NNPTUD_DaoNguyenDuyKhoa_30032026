@@ -3,12 +3,14 @@ var router = express.Router();
 let { postUserValidator, validateResult } = require('../utils/validatorHandler')
 let userController = require('../controllers/users')
 
+let { checkLogin } = require('../utils/authHandler.js')
+
 
 
 let userModel = require("../schemas/users");
 //- Strong password
 
-router.get("/", async function (req, res, next) {
+router.get("/", checkLogin, async function (req, res, next) {
   let users = await userModel
     .find({ isDeleted: false })
     .populate({
@@ -18,7 +20,7 @@ router.get("/", async function (req, res, next) {
   res.send(users);
 });
 
-router.get("/:id", async function (req, res, next) {
+router.get("/:id", checkLogin, async function (req, res, next) {
   try {
     let result = await userModel
       .find({ _id: req.params.id, isDeleted: false })
